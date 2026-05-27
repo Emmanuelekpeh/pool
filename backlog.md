@@ -23,6 +23,16 @@
   - 8 independent agents with persistent identities, weights, and memories.
   - Evolutionary mutation for worst performers.
 
+## Visual Overlays
+- [x] **Internal Simulation Reveal (Thoughts)**
+  - Press 'T' to toggle.
+  - Shows candidate shot lines.
+  - Shows predicted future positions (Ghost Balls).
+  - Displays Director Scores next to ghost balls.
+- [x] **Player Controls**
+  - Press 'P' to toggle player presence.
+  - WASD to charge shots, release to fire.
+
 ## System Structure
 - `main.py`: Entry point, runs the simulation loop.
 - `world.py`: Manages the pool table, pockets, and boundaries.
