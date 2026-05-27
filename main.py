@@ -36,7 +36,7 @@ class Player:
         self.last_hit_by = None
         self.last_hit_step = 0
 
-def run_episode(agents, renderer=None, player_wants_to_play=True):
+def run_episode(agents, renderer=None, player_wants_to_play=True, show_thoughts=False):
     space = create_space()
     setup_table(space)
     
@@ -135,7 +135,9 @@ def run_episode(agents, renderer=None, player_wants_to_play=True):
                     import sys
                     sys.exit(0)
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_p:
+                    if event.key == pygame.K_t:
+                        show_thoughts = not show_thoughts
+                    elif event.key == pygame.K_p:
                         player_wants_to_play = not player_wants_to_play
                         if not player_wants_to_play and player.alive:
                             # Remove immediately if toggled off
@@ -202,10 +204,10 @@ def run_episode(agents, renderer=None, player_wants_to_play=True):
                     end_pos = (int(start_pos[0] + ndx * line_len), int(start_pos[1] + ndy * line_len))
                     aim_line = (start_pos, end_pos)
             
-            renderer.render(space, agents, player, aim_line)
+            renderer.render(space, agents, player, aim_line, show_thoughts)
             renderer.tick(120)
             
-    return player_wants_to_play
+    return player_wants_to_play, show_thoughts
 
 import os
 import torch
@@ -258,13 +260,14 @@ def main():
         
     generation = load_population(agents)
     player_wants_to_play = True
+    show_thoughts = False
     
     while True:
         print(f"--- Generation {generation} (Evaluating over {EVALUATION_EPISODES} episodes) ---")
         
         for ep in range(EVALUATION_EPISODES):
             # Render all episodes if renderer is available
-            player_wants_to_play = run_episode(agents, renderer, player_wants_to_play)
+            player_wants_to_play, show_thoughts = run_episode(agents, renderer, player_wants_to_play, show_thoughts)
             
             for agent in agents:
                 agent.fitness_history.append(agent.fitness)

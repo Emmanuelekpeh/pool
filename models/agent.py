@@ -24,6 +24,7 @@ class Agent:
         self.enemies_sunk = 0
         self.last_action = [0.0, 0.0]
         self.overall_rating = 0.0
+        self.thought_process = [] # Stores candidate actions, futures, and scores
         
     def get_state(self, enemies=[], step_ratio=0.0):
         # 1. Position (normalized)
@@ -98,11 +99,21 @@ class Agent:
             best_action = candidates[0]
             best_score = -float('inf')
             
+            self.thought_process = []
+            
             for action in candidates:
                 future_input = torch.cat([state, action])
                 predicted_future = self.future(future_input)
                 director_input = torch.cat([state, action, hidden, predicted_future])
                 score = self.director(director_input).item()
+                
+                # Store thought process for visualization
+                self.thought_process.append({
+                    "action": action.numpy(),
+                    "future_pos": (predicted_future[0].item(), predicted_future[1].item()), # Normalized px, py
+                    "score": score
+                })
+                
                 if score > best_score:
                     best_score = score
                     best_action = action
